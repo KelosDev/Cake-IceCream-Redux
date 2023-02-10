@@ -1,6 +1,10 @@
 const redux = require('redux') //da mettere all'inizio della pagina
 const createStore = redux.createStore //a inizio pagina
 const bindActionCreators = redux.bindActionCreators //a inizio pagina
+const applyMiddleware = redux.applyMiddleware
+
+const reduxLogger = require('redux-logger')
+const logger = reduxLogger.createLogger()
 
 const CAKE_ORDERED = 'CAKE_ORDERED'
 const CAKE_RESTOCKED = 'CAKE_RESTOCKED'
@@ -9,7 +13,7 @@ const ICECREAM_RESTOCKED = 'ICECREAM_RESTOCKED'
 
 const combineReducers = redux.combineReducers
 
-// definizione di un'AZIONE
+//AZIONI
 
 const orderCake = () => { // funzione che crea un'azione e ritorna un oggetto
     return { // azione -> oggetto che ha una proprietà 'type'
@@ -39,7 +43,7 @@ const restockIceCream = (qty = 1) => {
     }
 }
 
-// definizione di uno stato iniziale
+// STATO INIZIALE
 
 const initialCakeState = {
     numOfCakes: 10,
@@ -49,7 +53,7 @@ const initialIceCreamState = {
     numOfIceCreams: 20,
 }
 
-// definizione di un REDUCER   ->    (previousState, action) => newState
+// REDUCERS  ->    (previousState, action) => newState
 
 const cakeReducer = (state = initialCakeState, action) => {
     switch (action.type) {
@@ -91,13 +95,13 @@ const rootReducer = combineReducers({
 
 
 
-// definizione dello STORE
+// STORE
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer, applyMiddleware(logger))
 console.log('initial state', store.getState());
 
 // allow the app to subscribe/to changes in the store -> use the subscribe method
-const unsubscribe = store.subscribe(() => console.log('updated state', store.getState()))
+const unsubscribe = store.subscribe(() => { })
 
 // now the store has to provide a dispatch method to update the state
 // store.dispatch(orderCake())
@@ -118,6 +122,5 @@ actions.orderIceCream()
 actions.restockIceCream(3)
 
 // now we have to unsubscribe the store by calling the function returned by the subscribe method
-
 unsubscribe()
 
